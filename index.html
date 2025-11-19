@@ -45,7 +45,7 @@
 
         #scene {
             width: 100%;
-            height: 400px;
+            height: 500px;
             border-radius: 15px;
             overflow: hidden;
             position: relative;
@@ -55,18 +55,18 @@
 
         .sky {
             width: 100%;
-            height: 50%;
+            height: 60%;
             position: absolute;
             top: 0;
-            transition: all 0.8s ease;
+            transition: background 0.8s ease;
         }
 
         .ground {
             width: 100%;
-            height: 50%;
+            height: 40%;
             position: absolute;
             bottom: 0;
-            transition: all 0.8s ease;
+            transition: background 0.8s ease;
         }
 
         .atmosphere {
@@ -75,106 +75,429 @@
             position: absolute;
             top: 0;
             pointer-events: none;
-            transition: all 0.8s ease;
+            transition: opacity 0.8s ease;
         }
 
-        /* Sky Styles */
+        /* Sky Backgrounds */
         .sky.clear {
-            background: linear-gradient(to bottom, #87CEEB 0%, #B0E0E6 100%);
+            background: linear-gradient(to bottom, #5BA3E0 0%, #87CEEB 50%, #B0E0E6 100%);
         }
 
         .sky.cloudy {
-            background: linear-gradient(to bottom, #9CA3AF 0%, #D1D5DB 100%);
+            background: linear-gradient(to bottom, #A0AEC0 0%, #CBD5E0 70%, #E2E8F0 100%);
         }
 
         .sky.sunset {
-            background: linear-gradient(to bottom, #FF6B6B 0%, #FFA500 50%, #FFD700 100%);
+            background: linear-gradient(to bottom, #FF6B6B 0%, #FF8E53 30%, #FFA500 60%, #FFD93D 100%);
         }
 
         .sky.starry {
-            background: linear-gradient(to bottom, #000428 0%, #004e92 100%);
-            position: relative;
+            background: linear-gradient(to bottom, #0a0e27 0%, #1a1f4d 50%, #2a3f6e 100%);
         }
 
         .sky.storm {
-            background: linear-gradient(to bottom, #2C3E50 0%, #4A5568 100%);
+            background: linear-gradient(to bottom, #2C3E50 0%, #34495E 50%, #4A5568 100%);
         }
 
-        /* Ground Styles */
+        /* Ground Backgrounds */
         .ground.sand {
-            background: linear-gradient(to bottom, #F4E4C1 0%, #E8D5B7 100%);
+            background: linear-gradient(to bottom, #F4E4C1 0%, #E8D5B7 50%, #D4C4A8 100%);
         }
 
         .ground.forest {
-            background: linear-gradient(to bottom, #2D5016 0%, #1A3409 100%);
+            background: linear-gradient(to bottom, #2D5016 0%, #1F3A0F 50%, #162808 100%);
         }
 
         .ground.ocean {
-            background: linear-gradient(to bottom, #006994 0%, #003D5C 100%);
+            background: linear-gradient(to bottom, #1E88E5 0%, #1976D2 30%, #1565C0 60%, #0D47A1 100%);
         }
 
         .ground.grassland {
-            background: linear-gradient(to bottom, #7CB342 0%, #558B2F 100%);
+            background: linear-gradient(to bottom, #7CB342 0%, #689F38 50%, #558B2F 100%);
         }
 
         .ground.city {
-            background: linear-gradient(to bottom, #455A64 0%, #263238 100%);
+            background: linear-gradient(to bottom, #37474F 0%, #263238 50%, #1A1F23 100%);
         }
 
-        /* Atmosphere Styles */
-        .atmosphere.fog {
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(3px);
+        /* Sky Elements Container */
+        .sky-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
         }
 
-        .atmosphere.light {
-            background: radial-gradient(circle at 70% 30%, rgba(255, 255, 200, 0.6), transparent 50%);
+        /* Sun */
+        .sun {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #FFF176 0%, #FFD54F 50%, #FFA726 100%);
+            border-radius: 50%;
+            top: 15%;
+            right: 20%;
+            box-shadow: 0 0 60px rgba(255, 193, 7, 0.8), 0 0 100px rgba(255, 160, 0, 0.4);
+            animation: sunPulse 4s ease-in-out infinite;
         }
 
-        .atmosphere.rain {
+        @keyframes sunPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Moon */
+        .moon {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle at 30% 30%, #F5F5F5, #E0E0E0);
+            border-radius: 50%;
+            top: 15%;
+            right: 15%;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.6),
+                        inset -10px -10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .moon::before {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            top: 30%;
+            left: 25%;
+        }
+
+        .moon::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 50%;
+            bottom: 30%;
+            right: 25%;
+        }
+
+        /* Stars */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Clouds */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 100px;
+            animation: cloudFloat 30s linear infinite;
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+        }
+
+        @keyframes cloudFloat {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100px); }
+        }
+
+        /* Lightning */
+        .lightning {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 60px solid #FFE600;
+            top: 30%;
+            left: 30%;
+            opacity: 0;
+            animation: flash 4s ease-in-out infinite;
+            filter: blur(1px);
+        }
+
+        .lightning::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 40px solid #FFE600;
+            top: 60px;
+            left: -5px;
+        }
+
+        @keyframes flash {
+            0%, 10%, 20%, 100% { opacity: 0; }
+            5%, 15% { opacity: 1; }
+        }
+
+        /* Ground Elements Container */
+        .ground-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            left: 0;
+        }
+
+        /* Trees */
+        .tree {
+            position: absolute;
+            bottom: 0;
+        }
+
+        .tree-trunk {
+            width: 20px;
+            height: 60px;
+            background: #3E2723;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .tree-foliage {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #2E7D32, #1B5E20);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .tree-foliage::before,
+        .tree-foliage::after {
+            content: '';
+            position: absolute;
+            background: radial-gradient(circle, #388E3C, #2E7D32);
+            border-radius: 50%;
+        }
+
+        .tree-foliage::before {
+            width: 60px;
+            height: 60px;
+            top: -20px;
+            left: -20px;
+        }
+
+        .tree-foliage::after {
+            width: 60px;
+            height: 60px;
+            top: -20px;
+            right: -20px;
+        }
+
+        /* Ocean Waves */
+        .waves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .wave {
+            position: absolute;
+            width: 200%;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: wave 8s ease-in-out infinite;
+        }
+
+        .wave:nth-child(2) {
+            top: 20px;
+            animation-delay: -2s;
+            opacity: 0.5;
+        }
+
+        .wave:nth-child(3) {
+            top: 40px;
+            animation-delay: -4s;
+            opacity: 0.3;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* Buildings */
+        .building {
+            position: absolute;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .building-window {
+            position: absolute;
+            background: rgba(255, 255, 150, 0.8);
+            width: 8px;
+            height: 10px;
+            animation: windowLight 3s ease-in-out infinite;
+        }
+
+        @keyframes windowLight {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Grass */
+        .grass-blade {
+            position: absolute;
+            bottom: 0;
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(to top, #4CAF50, #8BC34A);
+            border-radius: 50% 50% 0 0;
+            animation: grassSway 3s ease-in-out infinite;
+            transform-origin: bottom;
+        }
+
+        @keyframes grassSway {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(3deg); }
+            75% { transform: rotate(-3deg); }
+        }
+
+        /* Sand Dunes */
+        .dune {
+            position: absolute;
+            bottom: 0;
+            width: 200px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 50% 50% 0 0;
+        }
+
+        /* Cactus */
+        .cactus {
+            position: absolute;
+            bottom: 0;
+        }
+
+        .cactus-body {
+            width: 25px;
+            height: 60px;
+            background: #558B2F;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .cactus-arm {
+            width: 20px;
+            height: 30px;
+            background: #558B2F;
+            border-radius: 10px;
+            position: absolute;
+        }
+
+        .cactus-arm.left {
+            left: -15px;
+            top: 15px;
+        }
+
+        .cactus-arm.right {
+            right: -15px;
+            top: 20px;
+        }
+
+        /* Atmosphere Effects */
+        .fog-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(173, 216, 230, 0.3) 2px,
-                rgba(173, 216, 230, 0.3) 3px
+                to bottom,
+                rgba(255, 255, 255, 0.3) 0px,
+                rgba(255, 255, 255, 0.1) 50px,
+                rgba(255, 255, 255, 0.3) 100px
             );
-            animation: rain 0.5s linear infinite;
+            animation: fogMove 10s ease-in-out infinite;
         }
 
-        .atmosphere.wind {
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 20px,
-                rgba(255, 255, 255, 0.1) 20px,
-                rgba(255, 255, 255, 0.1) 40px
+        @keyframes fogMove {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 0.9; }
+        }
+
+        /* Rain Drops */
+        .rain-drop {
+            position: absolute;
+            width: 2px;
+            height: 15px;
+            background: linear-gradient(to bottom, transparent, rgba(173, 216, 230, 0.6));
+            animation: rainfall 1s linear infinite;
+        }
+
+        @keyframes rainfall {
+            from { transform: translateY(-100px); }
+            to { transform: translateY(500px); }
+        }
+
+        /* Firefly */
+        .firefly {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #FFEB3B;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #FFEB3B, 0 0 20px #FFC107;
+            animation: fireflyFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes fireflyFloat {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: 0.3;
+            }
+            25% {
+                transform: translate(30px, -20px);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(60px, 10px);
+                opacity: 0.5;
+            }
+            75% {
+                transform: translate(30px, 30px);
+                opacity: 1;
+            }
+        }
+
+        /* Sun Rays */
+        .sun-ray {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at 70% 20%,
+                rgba(255, 255, 200, 0.3) 0%,
+                transparent 60%
             );
-            animation: wind 3s linear infinite;
-        }
-
-        .atmosphere.fireflies {
-            background: radial-gradient(circle at 20% 40%, rgba(255, 255, 100, 0.3) 1px, transparent 1px),
-                        radial-gradient(circle at 60% 70%, rgba(255, 255, 100, 0.3) 1px, transparent 1px),
-                        radial-gradient(circle at 80% 30%, rgba(255, 255, 100, 0.3) 1px, transparent 1px),
-                        radial-gradient(circle at 40% 80%, rgba(255, 255, 100, 0.3) 1px, transparent 1px),
-                        radial-gradient(circle at 90% 60%, rgba(255, 255, 100, 0.3) 1px, transparent 1px);
-            animation: fireflies 2s ease-in-out infinite;
-        }
-
-        @keyframes rain {
-            from { background-position: 0 0; }
-            to { background-position: 0 20px; }
-        }
-
-        @keyframes wind {
-            from { background-position: 0 0; }
-            to { background-position: 40px 40px; }
-        }
-
-        @keyframes fireflies {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.8; }
         }
 
         .controls {
@@ -227,6 +550,7 @@
             display: flex;
             justify-content: center;
             gap: 15px;
+            flex-wrap: wrap;
         }
 
         .save-btn, .random-btn {
@@ -247,10 +571,6 @@
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
         }
 
-        .save-btn:active, .random-btn:active {
-            transform: translateY(-1px);
-        }
-
         .scene-description {
             text-align: center;
             color: #666;
@@ -264,12 +584,12 @@
                 font-size: 1.8em;
             }
 
-            .controls {
-                grid-template-columns: 1fr;
+            #scene {
+                height: 350px;
             }
 
-            #scene {
-                height: 300px;
+            .controls {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -280,9 +600,15 @@
     <div class="container">
         <div class="scene-container">
             <div id="scene">
-                <div class="sky clear"></div>
-                <div class="ground sand"></div>
-                <div class="atmosphere fog"></div>
+                <div class="sky clear">
+                    <div class="sky-elements"></div>
+                </div>
+                <div class="ground sand">
+                    <div class="ground-elements"></div>
+                </div>
+                <div class="atmosphere">
+                    <div class="atmosphere-elements"></div>
+                </div>
             </div>
             <div class="scene-description" id="description">
                 Clear sky + Sand + Fog
@@ -325,14 +651,12 @@
     </div>
 
     <script>
-        // State management
         const state = {
             sky: 'clear',
             ground: 'sand',
             atmosphere: 'fog'
         };
 
-        // Scene descriptions
         const descriptions = {
             'starry-ocean-fireflies': '✨ A romantic night by the ocean with dancing fireflies',
             'storm-city-fog': '🌃 A mysterious post-apocalyptic cityscape',
@@ -346,23 +670,271 @@
             'cloudy-grassland-fog': '🌫️ A misty morning in the highlands'
         };
 
-        // Elements
         const skyElement = document.querySelector('.sky');
         const groundElement = document.querySelector('.ground');
         const atmosphereElement = document.querySelector('.atmosphere');
+        const skyElementsContainer = document.querySelector('.sky-elements');
+        const groundElementsContainer = document.querySelector('.ground-elements');
+        const atmosphereElementsContainer = document.querySelector('.atmosphere-elements');
         const descriptionElement = document.getElementById('description');
-        const saveBtn = document.getElementById('saveBtn');
-        const randomBtn = document.getElementById('randomBtn');
-        const optionButtons = document.querySelectorAll('.option-btn');
+
+        // Generate Sky Elements
+        function generateSkyElements(skyType) {
+            skyElementsContainer.innerHTML = '';
+
+            switch(skyType) {
+                case 'clear':
+                    skyElementsContainer.innerHTML = '<div class="sun"></div>';
+                    for (let i = 0; i < 5; i++) {
+                        const cloud = createCloud(Math.random() * 80, Math.random() * 60 + 10);
+                        skyElementsContainer.appendChild(cloud);
+                    }
+                    break;
+
+                case 'cloudy':
+                    for (let i = 0; i < 12; i++) {
+                        const cloud = createCloud(Math.random() * 90, Math.random() * 80);
+                        skyElementsContainer.appendChild(cloud);
+                    }
+                    break;
+
+                case 'sunset':
+                    skyElementsContainer.innerHTML = '<div class="sun" style="top: 60%; background: radial-gradient(circle, #FF6347 0%, #FF4500 100%);"></div>';
+                    for (let i = 0; i < 6; i++) {
+                        const cloud = createCloud(Math.random() * 80, Math.random() * 70 + 10);
+                        cloud.style.background = 'rgba(255, 120, 80, 0.5)';
+                        skyElementsContainer.appendChild(cloud);
+                    }
+                    break;
+
+                case 'starry':
+                    skyElementsContainer.innerHTML = '<div class="moon"></div>';
+                    const starsContainer = document.createElement('div');
+                    starsContainer.className = 'stars';
+                    for (let i = 0; i < 100; i++) {
+                        const star = document.createElement('div');
+                        star.className = 'star';
+                        star.style.width = Math.random() * 3 + 1 + 'px';
+                        star.style.height = star.style.width;
+                        star.style.left = Math.random() * 100 + '%';
+                        star.style.top = Math.random() * 100 + '%';
+                        star.style.animationDelay = Math.random() * 3 + 's';
+                        starsContainer.appendChild(star);
+                    }
+                    skyElementsContainer.appendChild(starsContainer);
+                    break;
+
+                case 'storm':
+                    for (let i = 0; i < 8; i++) {
+                        const cloud = createCloud(Math.random() * 90, Math.random() * 70);
+                        cloud.style.background = 'rgba(50, 50, 50, 0.8)';
+                        skyElementsContainer.appendChild(cloud);
+                    }
+                    const lightning = document.createElement('div');
+                    lightning.className = 'lightning';
+                    skyElementsContainer.appendChild(lightning);
+                    break;
+            }
+        }
+
+        // Create Cloud Element
+        function createCloud(left, top) {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            cloud.style.left = left + '%';
+            cloud.style.top = top + '%';
+            cloud.style.width = Math.random() * 60 + 60 + 'px';
+            cloud.style.height = Math.random() * 20 + 30 + 'px';
+            cloud.style.animationDuration = Math.random() * 20 + 20 + 's';
+            cloud.style.animationDelay = Math.random() * -20 + 's';
+
+            const before = Math.random() * 40 + 40;
+            const after = Math.random() * 40 + 40;
+            cloud.style.setProperty('--before-size', before + 'px');
+            cloud.style.setProperty('--after-size', after + 'px');
+
+            return cloud;
+        }
+
+        // Generate Ground Elements
+        function generateGroundElements(groundType) {
+            groundElementsContainer.innerHTML = '';
+
+            switch(groundType) {
+                case 'sand':
+                    for (let i = 0; i < 3; i++) {
+                        const dune = document.createElement('div');
+                        dune.className = 'dune';
+                        dune.style.left = i * 30 + Math.random() * 10 + '%';
+                        dune.style.width = Math.random() * 100 + 150 + 'px';
+                        dune.style.height = Math.random() * 30 + 40 + 'px';
+                        groundElementsContainer.appendChild(dune);
+                    }
+
+                    const cactusPositions = [20, 70];
+                    cactusPositions.forEach(pos => {
+                        const cactus = createCactus(pos);
+                        groundElementsContainer.appendChild(cactus);
+                    });
+                    break;
+
+                case 'forest':
+                    for (let i = 0; i < 8; i++) {
+                        const tree = createTree(i * 12 + Math.random() * 10);
+                        groundElementsContainer.appendChild(tree);
+                    }
+                    break;
+
+                case 'ocean':
+                    const wavesContainer = document.createElement('div');
+                    wavesContainer.className = 'waves';
+                    for (let i = 0; i < 3; i++) {
+                        const wave = document.createElement('div');
+                        wave.className = 'wave';
+                        wave.style.top = i * 30 + '%';
+                        wavesContainer.appendChild(wave);
+                    }
+                    groundElementsContainer.appendChild(wavesContainer);
+                    break;
+
+                case 'grassland':
+                    for (let i = 0; i < 50; i++) {
+                        const grass = document.createElement('div');
+                        grass.className = 'grass-blade';
+                        grass.style.left = Math.random() * 100 + '%';
+                        grass.style.height = Math.random() * 20 + 20 + 'px';
+                        grass.style.animationDelay = Math.random() * 3 + 's';
+                        grass.style.animationDuration = Math.random() * 2 + 2 + 's';
+                        groundElementsContainer.appendChild(grass);
+                    }
+                    break;
+
+                case 'city':
+                    for (let i = 0; i < 10; i++) {
+                        const building = createBuilding(i * 10);
+                        groundElementsContainer.appendChild(building);
+                    }
+                    break;
+            }
+        }
+
+        // Create Tree
+        function createTree(left) {
+            const tree = document.createElement('div');
+            tree.className = 'tree';
+            tree.style.left = left + '%';
+
+            const trunk = document.createElement('div');
+            trunk.className = 'tree-trunk';
+            tree.appendChild(trunk);
+
+            const foliage = document.createElement('div');
+            foliage.className = 'tree-foliage';
+            tree.appendChild(foliage);
+
+            return tree;
+        }
+
+        // Create Building
+        function createBuilding(left) {
+            const building = document.createElement('div');
+            building.className = 'building';
+            building.style.left = left + '%';
+            building.style.width = Math.random() * 40 + 60 + 'px';
+            building.style.height = Math.random() * 100 + 100 + 'px';
+
+            const rows = Math.floor(Math.random() * 8) + 5;
+            const cols = 3;
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const window = document.createElement('div');
+                    window.className = 'building-window';
+                    window.style.left = (j * 20 + 10) + 'px';
+                    window.style.top = (i * 20 + 10) + 'px';
+                    window.style.animationDelay = Math.random() * 3 + 's';
+                    building.appendChild(window);
+                }
+            }
+
+            return building;
+        }
+
+        // Create Cactus
+        function createCactus(left) {
+            const cactus = document.createElement('div');
+            cactus.className = 'cactus';
+            cactus.style.left = left + '%';
+
+            const body = document.createElement('div');
+            body.className = 'cactus-body';
+
+            const leftArm = document.createElement('div');
+            leftArm.className = 'cactus-arm left';
+            body.appendChild(leftArm);
+
+            const rightArm = document.createElement('div');
+            rightArm.className = 'cactus-arm right';
+            body.appendChild(rightArm);
+
+            cactus.appendChild(body);
+            return cactus;
+        }
+
+        // Generate Atmosphere Elements
+        function generateAtmosphereElements(atmosphereType) {
+            atmosphereElementsContainer.innerHTML = '';
+
+            switch(atmosphereType) {
+                case 'fog':
+                    const fog = document.createElement('div');
+                    fog.className = 'fog-layer';
+                    atmosphereElementsContainer.appendChild(fog);
+                    break;
+
+                case 'light':
+                    const rays = document.createElement('div');
+                    rays.className = 'sun-ray';
+                    atmosphereElementsContainer.appendChild(rays);
+                    break;
+
+                case 'rain':
+                    for (let i = 0; i < 100; i++) {
+                        const drop = document.createElement('div');
+                        drop.className = 'rain-drop';
+                        drop.style.left = Math.random() * 100 + '%';
+                        drop.style.animationDelay = Math.random() * 2 + 's';
+                        drop.style.animationDuration = Math.random() * 0.5 + 0.5 + 's';
+                        atmosphereElementsContainer.appendChild(drop);
+                    }
+                    break;
+
+                case 'wind':
+                    // Wind effect is subtle, could add blowing leaves
+                    break;
+
+                case 'fireflies':
+                    for (let i = 0; i < 20; i++) {
+                        const firefly = document.createElement('div');
+                        firefly.className = 'firefly';
+                        firefly.style.left = Math.random() * 100 + '%';
+                        firefly.style.top = Math.random() * 100 + '%';
+                        firefly.style.animationDelay = Math.random() * 4 + 's';
+                        firefly.style.animationDuration = Math.random() * 3 + 3 + 's';
+                        atmosphereElementsContainer.appendChild(firefly);
+                    }
+                    break;
+            }
+        }
 
         // Update scene
         function updateScene() {
-            // Update classes
             skyElement.className = `sky ${state.sky}`;
             groundElement.className = `ground ${state.ground}`;
-            atmosphereElement.className = `atmosphere ${state.atmosphere}`;
 
-            // Update description
+            generateSkyElements(state.sky);
+            generateGroundElements(state.ground);
+            generateAtmosphereElements(state.atmosphere);
+
             const key = `${state.sky}-${state.ground}-${state.atmosphere}`;
             const capitalizedSky = state.sky.charAt(0).toUpperCase() + state.sky.slice(1);
             const capitalizedGround = state.ground.charAt(0).toUpperCase() + state.ground.slice(1);
@@ -374,29 +946,23 @@
             descriptionElement.textContent = description;
         }
 
-        // Handle button clicks
-        optionButtons.forEach(button => {
+        // Button handlers
+        document.querySelectorAll('.option-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const category = button.dataset.category;
                 const value = button.dataset.value;
 
-                // Remove active class from siblings
                 const siblings = document.querySelectorAll(`[data-category="${category}"]`);
                 siblings.forEach(btn => btn.classList.remove('active'));
 
-                // Add active class to clicked button
                 button.classList.add('active');
-
-                // Update state
                 state[category] = value;
-
-                // Update scene
                 updateScene();
             });
         });
 
-        // Random scene generator
-        randomBtn.addEventListener('click', () => {
+        // Random scene
+        document.getElementById('randomBtn').addEventListener('click', () => {
             const skyOptions = ['clear', 'cloudy', 'sunset', 'starry', 'storm'];
             const groundOptions = ['sand', 'forest', 'ocean', 'grassland', 'city'];
             const atmosphereOptions = ['fog', 'light', 'rain', 'wind', 'fireflies'];
@@ -405,8 +971,7 @@
             state.ground = groundOptions[Math.floor(Math.random() * groundOptions.length)];
             state.atmosphere = atmosphereOptions[Math.floor(Math.random() * atmosphereOptions.length)];
 
-            // Update active buttons
-            optionButtons.forEach(btn => {
+            document.querySelectorAll('.option-btn').forEach(btn => {
                 const category = btn.dataset.category;
                 const value = btn.dataset.value;
                 btn.classList.toggle('active', state[category] === value);
@@ -416,53 +981,39 @@
         });
 
         // Save scene
-        saveBtn.addEventListener('click', async () => {
+        document.getElementById('saveBtn').addEventListener('click', async () => {
             const scene = document.getElementById('scene');
 
             try {
-                // Using html2canvas library (CDN approach)
-                const canvas = await html2canvas(scene, {
-                    backgroundColor: null,
-                    scale: 2
-                });
+                if (typeof html2canvas !== 'undefined') {
+                    const canvas = await html2canvas(scene, {
+                        backgroundColor: null,
+                        scale: 2
+                    });
 
-                // Convert to blob and download
-                canvas.toBlob(blob => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `landscape-${state.sky}-${state.ground}-${state.atmosphere}.png`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                });
+                    canvas.toBlob(blob => {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `landscape-${state.sky}-${state.ground}-${state.atmosphere}.png`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    });
+                } else {
+                    alert('Please wait for the page to fully load before saving.');
+                }
             } catch (error) {
-                // Fallback: Create a simple SVG representation
-                const svgData = `
-                    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="400">
-                        <rect width="800" height="200" fill="${window.getComputedStyle(skyElement).background}" />
-                        <rect y="200" width="800" height="200" fill="${window.getComputedStyle(groundElement).background}" />
-                        <text x="400" y="220" text-anchor="middle" font-size="20" fill="white" stroke="black" stroke-width="1">
-                            ${state.sky} + ${state.ground} + ${state.atmosphere}
-                        </text>
-                    </svg>
-                `;
-
-                const blob = new Blob([svgData], { type: 'image/svg+xml' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `landscape-${state.sky}-${state.ground}-${state.atmosphere}.svg`;
-                a.click();
-                URL.revokeObjectURL(url);
+                console.error('Save failed:', error);
+                alert('Failed to save image. Please try again.');
             }
         });
 
-        // Load html2canvas from CDN
+        // Load html2canvas
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
         document.head.appendChild(script);
 
-        // Initialize scene
+        // Initialize
         updateScene();
     </script>
 </body>
