@@ -553,7 +553,7 @@
             flex-wrap: wrap;
         }
 
-        .save-btn, .random-btn {
+        .save-btn, .random-btn, .audio-btn {
             padding: 15px 40px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -566,9 +566,13 @@
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
 
-        .save-btn:hover, .random-btn:hover {
+        .save-btn:hover, .random-btn:hover, .audio-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .audio-btn.muted {
+            background: linear-gradient(135deg, #9E9E9E 0%, #757575 100%);
         }
 
         .scene-description {
@@ -645,6 +649,7 @@
         </div>
 
         <div class="save-container">
+            <button class="audio-btn" id="audioBtn">🔊 Sound On</button>
             <button class="random-btn" id="randomBtn">🎲 Random Scene</button>
             <button class="save-btn" id="saveBtn">💾 Save Landscape</button>
         </div>
@@ -654,8 +659,335 @@
         const state = {
             sky: 'clear',
             ground: 'sand',
-            atmosphere: 'fog'
+            atmosphere: 'fog',
+            audioEnabled: false
         };
+
+        // Audio System
+        class AudioManager {
+            constructor() {
+                this.audioContext = null;
+                this.currentSources = {};
+                this.gainNodes = {};
+            }
+
+            init() {
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            // Generate rain sound
+            createRainSound() {
+                const bufferSize = this.audioContext.sampleRate * 2;
+                const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * 0.3;
+                }
+
+                const source = this.audioContext.createBufferSource();
+                source.buffer = buffer;
+                source.loop = true;
+
+                const filter = this.audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 1000;
+
+                const gainNode = this.audioContext.createGain();
+                gainNode.gain.value = 0.3;
+
+                source.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+
+                return { source, gainNode };
+            }
+
+            // Generate wind sound
+            createWindSound() {
+                const bufferSize = this.audioContext.sampleRate * 2;
+                const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * 0.2;
+                }
+
+                const source = this.audioContext.createBufferSource();
+                source.buffer = buffer;
+                source.loop = true;
+
+                const filter = this.audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 400;
+
+                const gainNode = this.audioContext.createGain();
+                gainNode.gain.value = 0.25;
+
+                source.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+
+                return { source, gainNode };
+            }
+
+            // Generate ocean waves sound
+            createOceanSound() {
+                const bufferSize = this.audioContext.sampleRate * 4;
+                const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    const envelope = Math.sin((i / bufferSize) * Math.PI);
+                    data[i] = (Math.random() * 2 - 1) * 0.3 * envelope;
+                }
+
+                const source = this.audioContext.createBufferSource();
+                source.buffer = buffer;
+                source.loop = true;
+
+                const filter = this.audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 800;
+
+                const gainNode = this.audioContext.createGain();
+                gainNode.gain.value = 0.2;
+
+                source.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+
+                return { source, gainNode };
+            }
+
+            // Generate night ambience (crickets simulation)
+            createNightSound() {
+                const gainNode = this.audioContext.createGain();
+                gainNode.gain.value = 0.15;
+                gainNode.connect(this.audioContext.destination);
+
+                const oscillators = [];
+
+                // Create multiple oscillators for cricket-like sounds
+                for (let i = 0; i < 3; i++) {
+                    const osc = this.audioContext.createOscillator();
+                    osc.frequency.value = 3000 + Math.random() * 2000;
+                    osc.type = 'sine';
+
+                    const oscGain = this.audioContext.createGain();
+                    oscGain.gain.value = 0;
+
+                    osc.connect(oscGain);
+                    oscGain.connect(gainNode);
+
+                    osc.start();
+                    oscillators.push({ osc, oscGain });
+
+                    // Chirp pattern
+                    setInterval(() => {
+                        const now = this.audioContext.currentTime;
+                        oscGain.gain.cancelScheduledValues(now);
+                        oscGain.gain.setValueAtTime(0, now);
+                        oscGain.gain.linearRampToValueAtTime(0.3, now + 0.1);
+                        oscGain.gain.linearRampToValueAtTime(0, now + 0.3);
+                    }, 1000 + Math.random() * 2000);
+                }
+
+                return { source: { stop: () => oscillators.forEach(o => o.osc.stop()) }, gainNode };
+            }
+
+            // Generate storm/thunder sound
+            createStormSound() {
+                const bufferSize = this.audioContext.sampleRate * 2;
+                const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * 0.4;
+                }
+
+                const source = this.audioContext.createBufferSource();
+                source.buffer = buffer;
+                source.loop = true;
+
+                const filter = this.audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 600;
+
+                const gainNode = this.audioContext.createGain();
+                gainNode.gain.value = 0.3;
+
+                source.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+
+                // Random thunder
+                setInterval(() => {
+                    if (Math.random() > 0.7) {
+                        const now = this.audioContext.currentTime;
+                        gainNode.gain.cancelScheduledValues(now);
+                        gainNode.gain.setValueAtTime(0.3, now);
+                        gainNode.gain.linearRampToValueAtTime(0.7, now + 0.1);
+                        gainNode.gain.linearRampToValueAtTime(0.3, now + 0.5);
+                    }
+                }, 3000);
+
+                return { source, gainNode };
+            }
+
+            // Generate birds chirping
+            createBirdsSound() {
+                const gainNode = this.audioContext.createGain();
+                gainNode.gain.value = 0.1;
+                gainNode.connect(this.audioContext.destination);
+
+                const oscillators = [];
+
+                for (let i = 0; i < 2; i++) {
+                    const osc = this.audioContext.createOscillator();
+                    osc.frequency.value = 1000 + Math.random() * 1000;
+                    osc.type = 'sine';
+
+                    const oscGain = this.audioContext.createGain();
+                    oscGain.gain.value = 0;
+
+                    osc.connect(oscGain);
+                    oscGain.connect(gainNode);
+
+                    osc.start();
+                    oscillators.push({ osc, oscGain });
+
+                    // Bird chirp pattern
+                    setInterval(() => {
+                        const now = this.audioContext.currentTime;
+                        const freq = 800 + Math.random() * 1200;
+                        osc.frequency.setValueAtTime(freq, now);
+
+                        oscGain.gain.cancelScheduledValues(now);
+                        oscGain.gain.setValueAtTime(0, now);
+                        oscGain.gain.linearRampToValueAtTime(0.5, now + 0.05);
+                        oscGain.gain.linearRampToValueAtTime(0, now + 0.2);
+                    }, 2000 + Math.random() * 5000);
+                }
+
+                return { source: { stop: () => oscillators.forEach(o => o.osc.stop()) }, gainNode };
+            }
+
+            // Play sound based on scene
+            playSceneSound(sky, ground, atmosphere) {
+                if (!this.audioContext) return;
+
+                // Stop all current sounds with fade out
+                this.stopAllSounds();
+
+                // Determine which sounds to play
+                const soundsToPlay = [];
+
+                // Atmosphere sounds (primary)
+                if (atmosphere === 'rain') {
+                    soundsToPlay.push('rain');
+                } else if (atmosphere === 'wind') {
+                    soundsToPlay.push('wind');
+                }
+
+                // Ground sounds
+                if (ground === 'ocean') {
+                    soundsToPlay.push('ocean');
+                } else if (ground === 'forest') {
+                    soundsToPlay.push('birds');
+                }
+
+                // Sky sounds
+                if (sky === 'storm') {
+                    soundsToPlay.push('storm');
+                } else if (sky === 'starry') {
+                    soundsToPlay.push('night');
+                }
+
+                // Play selected sounds
+                soundsToPlay.forEach(soundType => {
+                    this.playSound(soundType);
+                });
+            }
+
+            playSound(type) {
+                let sound;
+
+                switch(type) {
+                    case 'rain':
+                        sound = this.createRainSound();
+                        break;
+                    case 'wind':
+                        sound = this.createWindSound();
+                        break;
+                    case 'ocean':
+                        sound = this.createOceanSound();
+                        break;
+                    case 'storm':
+                        sound = this.createStormSound();
+                        break;
+                    case 'night':
+                        sound = this.createNightSound();
+                        break;
+                    case 'birds':
+                        sound = this.createBirdsSound();
+                        break;
+                    default:
+                        return;
+                }
+
+                if (sound && sound.source) {
+                    sound.source.start ? sound.source.start(0) : null;
+                    this.currentSources[type] = sound.source;
+                    this.gainNodes[type] = sound.gainNode;
+
+                    // Fade in
+                    const now = this.audioContext.currentTime;
+                    sound.gainNode.gain.setValueAtTime(0, now);
+                    sound.gainNode.gain.linearRampToValueAtTime(sound.gainNode.gain.value || 0.3, now + 1);
+                }
+            }
+
+            stopAllSounds() {
+                Object.keys(this.currentSources).forEach(key => {
+                    if (this.gainNodes[key] && this.audioContext) {
+                        // Fade out
+                        const now = this.audioContext.currentTime;
+                        this.gainNodes[key].gain.cancelScheduledValues(now);
+                        this.gainNodes[key].gain.setValueAtTime(this.gainNodes[key].gain.value, now);
+                        this.gainNodes[key].gain.linearRampToValueAtTime(0, now + 0.5);
+
+                        setTimeout(() => {
+                            if (this.currentSources[key] && this.currentSources[key].stop) {
+                                try {
+                                    this.currentSources[key].stop();
+                                } catch(e) {}
+                            }
+                            delete this.currentSources[key];
+                            delete this.gainNodes[key];
+                        }, 600);
+                    }
+                });
+            }
+
+            enable() {
+                this.init();
+                if (this.audioContext.state === 'suspended') {
+                    this.audioContext.resume();
+                }
+            }
+
+            disable() {
+                this.stopAllSounds();
+                if (this.audioContext && this.audioContext.state === 'running') {
+                    this.audioContext.suspend();
+                }
+            }
+        }
+
+        const audioManager = new AudioManager();
 
         const descriptions = {
             'starry-ocean-fireflies': '✨ A romantic night by the ocean with dancing fireflies',
@@ -944,6 +1276,11 @@
                 `${capitalizedSky} sky + ${capitalizedGround} + ${capitalizedAtmosphere}`;
 
             descriptionElement.textContent = description;
+
+            // Play audio if enabled
+            if (state.audioEnabled) {
+                audioManager.playSceneSound(state.sky, state.ground, state.atmosphere);
+            }
         }
 
         // Button handlers
@@ -978,6 +1315,23 @@
             });
 
             updateScene();
+        });
+
+        // Audio toggle
+        const audioBtn = document.getElementById('audioBtn');
+        audioBtn.addEventListener('click', () => {
+            state.audioEnabled = !state.audioEnabled;
+
+            if (state.audioEnabled) {
+                audioBtn.textContent = '🔊 Sound On';
+                audioBtn.classList.remove('muted');
+                audioManager.enable();
+                audioManager.playSceneSound(state.sky, state.ground, state.atmosphere);
+            } else {
+                audioBtn.textContent = '🔇 Sound Off';
+                audioBtn.classList.add('muted');
+                audioManager.disable();
+            }
         });
 
         // Save scene
