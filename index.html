@@ -30,22 +30,27 @@
 
         .container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1800px;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 30px;
+            min-height: calc(100vh - 120px);
         }
 
         .scene-container {
+            flex: 1;
             background: white;
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
         }
 
         #scene {
             width: 100%;
-            height: 500px;
+            flex: 1;
+            min-height: 600px;
             border-radius: 15px;
             overflow: hidden;
             position: relative;
@@ -500,14 +505,30 @@
             );
         }
 
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+        .sidebar {
+            width: 320px;
             background: white;
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            overflow-y: auto;
+            max-height: calc(100vh - 120px);
+        }
+
+        .sidebar h2 {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
         }
 
         .control-group {
@@ -518,8 +539,10 @@
 
         .control-group h3 {
             color: #667eea;
-            font-size: 1.2em;
+            font-size: 1.1em;
             margin-bottom: 5px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e0e0;
         }
 
         .option-btn {
@@ -546,24 +569,27 @@
             transform: scale(1.05);
         }
 
-        .save-container {
+        .action-buttons {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
         }
 
         .save-btn, .random-btn, .audio-btn {
-            padding: 15px 40px;
+            padding: 14px 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            width: 100%;
         }
 
         .save-btn:hover, .random-btn:hover, .audio-btn:hover {
@@ -583,17 +609,42 @@
             font-style: italic;
         }
 
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                min-height: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: none;
+                order: 2;
+            }
+
+            .scene-container {
+                order: 1;
+            }
+
+            #scene {
+                min-height: 400px;
+            }
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.8em;
             }
 
             #scene {
-                height: 350px;
+                min-height: 350px;
             }
 
-            .controls {
-                grid-template-columns: 1fr;
+            .sidebar {
+                padding: 20px;
+            }
+
+            .scene-container {
+                padding: 20px;
             }
         }
     </style>
@@ -602,6 +653,45 @@
     <h1>🌄 Landscape Generator</h1>
 
     <div class="container">
+        <div class="sidebar">
+            <h2>🎨 Controls</h2>
+
+            <div class="controls">
+                <div class="control-group">
+                    <h3>☁️ Sky</h3>
+                    <button class="option-btn active" data-category="sky" data-value="clear">Clear</button>
+                    <button class="option-btn" data-category="sky" data-value="cloudy">Cloudy</button>
+                    <button class="option-btn" data-category="sky" data-value="sunset">Sunset</button>
+                    <button class="option-btn" data-category="sky" data-value="starry">Starry</button>
+                    <button class="option-btn" data-category="sky" data-value="storm">Storm</button>
+                </div>
+
+                <div class="control-group">
+                    <h3>🏞️ Ground</h3>
+                    <button class="option-btn active" data-category="ground" data-value="sand">Sand</button>
+                    <button class="option-btn" data-category="ground" data-value="forest">Forest</button>
+                    <button class="option-btn" data-category="ground" data-value="ocean">Ocean</button>
+                    <button class="option-btn" data-category="ground" data-value="grassland">Grassland</button>
+                    <button class="option-btn" data-category="ground" data-value="city">City</button>
+                </div>
+
+                <div class="control-group">
+                    <h3>✨ Atmosphere</h3>
+                    <button class="option-btn active" data-category="atmosphere" data-value="fog">Fog</button>
+                    <button class="option-btn" data-category="atmosphere" data-value="light">Light</button>
+                    <button class="option-btn" data-category="atmosphere" data-value="rain">Rain</button>
+                    <button class="option-btn" data-category="atmosphere" data-value="wind">Wind</button>
+                    <button class="option-btn" data-category="atmosphere" data-value="fireflies">Fireflies</button>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="audio-btn" id="audioBtn">🔊 Sound On</button>
+                <button class="random-btn" id="randomBtn">🎲 Random Scene</button>
+                <button class="save-btn" id="saveBtn">💾 Save Landscape</button>
+            </div>
+        </div>
+
         <div class="scene-container">
             <div id="scene">
                 <div class="sky clear">
@@ -617,41 +707,6 @@
             <div class="scene-description" id="description">
                 Clear sky + Sand + Fog
             </div>
-        </div>
-
-        <div class="controls">
-            <div class="control-group">
-                <h3>☁️ Sky</h3>
-                <button class="option-btn active" data-category="sky" data-value="clear">Clear</button>
-                <button class="option-btn" data-category="sky" data-value="cloudy">Cloudy</button>
-                <button class="option-btn" data-category="sky" data-value="sunset">Sunset</button>
-                <button class="option-btn" data-category="sky" data-value="starry">Starry</button>
-                <button class="option-btn" data-category="sky" data-value="storm">Storm</button>
-            </div>
-
-            <div class="control-group">
-                <h3>🏞️ Ground</h3>
-                <button class="option-btn active" data-category="ground" data-value="sand">Sand</button>
-                <button class="option-btn" data-category="ground" data-value="forest">Forest</button>
-                <button class="option-btn" data-category="ground" data-value="ocean">Ocean</button>
-                <button class="option-btn" data-category="ground" data-value="grassland">Grassland</button>
-                <button class="option-btn" data-category="ground" data-value="city">City</button>
-            </div>
-
-            <div class="control-group">
-                <h3>✨ Atmosphere</h3>
-                <button class="option-btn active" data-category="atmosphere" data-value="fog">Fog</button>
-                <button class="option-btn" data-category="atmosphere" data-value="light">Light</button>
-                <button class="option-btn" data-category="atmosphere" data-value="rain">Rain</button>
-                <button class="option-btn" data-category="atmosphere" data-value="wind">Wind</button>
-                <button class="option-btn" data-category="atmosphere" data-value="fireflies">Fireflies</button>
-            </div>
-        </div>
-
-        <div class="save-container">
-            <button class="audio-btn" id="audioBtn">🔊 Sound On</button>
-            <button class="random-btn" id="randomBtn">🎲 Random Scene</button>
-            <button class="save-btn" id="saveBtn">💾 Save Landscape</button>
         </div>
     </div>
 
