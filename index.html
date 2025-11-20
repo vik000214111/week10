@@ -1156,7 +1156,7 @@
         }
 
         // Generate Ground Elements
-        function generateGroundElements(groundType) {
+        function generateGroundElements(groundType, skyType) {
             groundElementsContainer.innerHTML = '';
 
             switch(groundType) {
@@ -1210,7 +1210,7 @@
 
                 case 'city':
                     for (let i = 0; i < 10; i++) {
-                        const building = createBuilding(i * 10);
+                        const building = createBuilding(i * 10, skyType);
                         groundElementsContainer.appendChild(building);
                     }
                     break;
@@ -1235,12 +1235,26 @@
         }
 
         // Create Building
-        function createBuilding(left) {
+        function createBuilding(left, skyType) {
             const building = document.createElement('div');
             building.className = 'building';
             building.style.left = left + '%';
             building.style.width = Math.random() * 40 + 60 + 'px';
             building.style.height = Math.random() * 100 + 100 + 'px';
+
+            // Set building color based on sky type
+            // Day/bright skies: light buildings
+            // Night/dark skies: dark buildings
+            if (skyType === 'clear' || skyType === 'sunset') {
+                // Daytime - light colored buildings
+                building.style.background = 'rgba(200, 210, 220, 0.9)';
+            } else if (skyType === 'cloudy') {
+                // Cloudy - medium gray buildings
+                building.style.background = 'rgba(120, 130, 140, 0.8)';
+            } else {
+                // Night/Storm - dark buildings
+                building.style.background = 'rgba(0, 0, 0, 0.6)';
+            }
 
             const rows = Math.floor(Math.random() * 8) + 5;
             const cols = 3;
@@ -1331,7 +1345,7 @@
             groundElement.className = `ground ${state.ground}`;
 
             generateSkyElements(state.sky);
-            generateGroundElements(state.ground);
+            generateGroundElements(state.ground, state.sky);
             generateAtmosphereElements(state.atmosphere);
 
             const key = `${state.sky}-${state.ground}-${state.atmosphere}`;
