@@ -18,44 +18,43 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
         }
 
         h1 {
-            color: white;
-            margin: 20px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            font-size: 2.5em;
+            display: none;
         }
 
         .container {
             width: 100%;
-            max-width: 1800px;
+            max-width: 100%;
             display: flex;
             flex-direction: row;
-            gap: 30px;
-            min-height: calc(100vh - 120px);
+            gap: 0;
+            height: 100vh;
         }
 
         .scene-container {
             flex: 1;
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         #scene {
             width: 100%;
             flex: 1;
-            min-height: 600px;
-            border-radius: 15px;
+            height: 100%;
+            border-radius: 0;
             overflow: hidden;
             position: relative;
             transition: all 0.5s ease;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            box-shadow: none;
         }
 
         .sky {
@@ -508,14 +507,15 @@
         .sidebar {
             width: 320px;
             background: white;
-            border-radius: 20px;
+            border-radius: 0;
             padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
             gap: 25px;
             overflow-y: auto;
-            max-height: calc(100vh - 120px);
+            max-height: 100vh;
+            height: 100vh;
         }
 
         .sidebar h2 {
@@ -602,49 +602,61 @@
         }
 
         .scene-description {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             text-align: center;
-            color: #666;
-            margin-top: 15px;
-            font-size: 16px;
+            color: white;
+            font-size: 18px;
             font-style: italic;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            z-index: 100;
         }
 
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
-                min-height: auto;
+                height: auto;
             }
 
             .sidebar {
                 width: 100%;
                 max-height: none;
+                height: auto;
                 order: 2;
+                border-radius: 0;
             }
 
             .scene-container {
                 order: 1;
+                height: 60vh;
             }
 
             #scene {
-                min-height: 400px;
+                height: 60vh;
             }
         }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
+            #scene {
+                height: 50vh;
             }
 
-            #scene {
-                min-height: 350px;
+            .scene-container {
+                height: 50vh;
             }
 
             .sidebar {
                 padding: 20px;
             }
 
-            .scene-container {
-                padding: 20px;
+            .scene-description {
+                font-size: 14px;
+                padding: 8px 16px;
             }
         }
     </style>
