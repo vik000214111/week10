@@ -121,7 +121,7 @@
         }
 
         .ground.city {
-            background: linear-gradient(to bottom, #37474F 0%, #263238 50%, #1A1F23 100%);
+            /* background color is set dynamically in JavaScript based on sky type */
         }
 
         /* Sky Elements Container */
@@ -1343,6 +1343,23 @@
         function updateScene() {
             skyElement.className = `sky ${state.sky}`;
             groundElement.className = `ground ${state.ground}`;
+
+            // Set city ground background based on sky type
+            if (state.ground === 'city') {
+                if (state.sky === 'clear' || state.sky === 'sunset') {
+                    // Daytime - light gray ground
+                    groundElement.style.background = 'linear-gradient(to bottom, #B0BEC5 0%, #90A4AE 50%, #78909C 100%)';
+                } else if (state.sky === 'cloudy') {
+                    // Cloudy - medium gray ground
+                    groundElement.style.background = 'linear-gradient(to bottom, #78909C 0%, #607D8B 50%, #546E7A 100%)';
+                } else {
+                    // Night/Storm - dark ground
+                    groundElement.style.background = 'linear-gradient(to bottom, #37474F 0%, #263238 50%, #1A1F23 100%)';
+                }
+            } else {
+                // Reset background for non-city grounds (let CSS handle it)
+                groundElement.style.background = '';
+            }
 
             generateSkyElements(state.sky);
             generateGroundElements(state.ground, state.sky);
